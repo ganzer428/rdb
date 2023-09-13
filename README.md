@@ -9,6 +9,10 @@ without running database etc., I personally use it for quick access
 to my audio collection using a cache of data. Other usage is a quick context
 search - on standard UNIX server it engages builtin `fgrep` 
 which is quite effective. 
+Works pretty quick with modest data files, like with few hundred MB 
+file with few dozens thousands records on my Intel Core i7
+it takes around 0.001 second for `get`, 0.004 for `put`
+and 0.05 for basic `select`.
 
 -------------------------------------------------------------------
 Usage:
