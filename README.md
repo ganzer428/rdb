@@ -27,23 +27,26 @@ Usage:
     $r->del($key3);
     
     // Context search
-    foreach($r->select($text_match) as $key=>$value)
+    
+    // Get hash array
+    foreach($r->select($text_match) as $key => $value)
     {
-    ...
+        ...
     }
     
-    $keys = $r->select($text_match, 1);
-    foreach(array_slice($key, $page_start, $page_len) as $key)
+    // Get values, case sensitive - 3rd argument is false
+    $values = $r->select($text_match, RDB::SELECT_VALUES, false); 
+    
+    // Get keys and then values for select range
+    $keys = $r->select($text_match, RDB::SELECT_KEYS);
+    foreach(array_slice($keys, $page_start, $page_len) as $key)
     {
         $value = $r->get($key);
         ...
     }
     
-    // No case sensitive - 3rd argument is false
-    $values = $r->select($text_match, 2, false); 
-    
     // Low level implementation
-    $r->begin($text_match, 1);
+    $r->begin($text_match, RDB::SELECT_KEYS);
     $keys = array();
     while(($key = $r->next()) !== false)
     {
@@ -59,7 +62,8 @@ Static methods - directly to the file
     RDB::fput($filename, $key2, $value2);
     RDB::fdel($filename, $key3, $value2);
     $data = RDB::fselect($filename, $text_match);    
-    $keys = RDB::fselect($filename, $text_match, 1);    
+    $hash = RDB::fselect($filename, $text_match);    
+    $keys = RDB::fselect($filename, $text_match, RDB::SELECT_KEYS);    
     
 -------------------------------------------------------------------
 Records are kept as:

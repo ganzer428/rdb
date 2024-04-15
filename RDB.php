@@ -16,6 +16,9 @@ class RDB
     protected $select_size = 0;
     protected $select_mode = 0;
 
+    const SELECT_HASH = 0;
+    const SELECT_KEYS = 1;
+    const SELECT_VALUES = 2;
     /**
      * RDB constructor.
      * @param $filename
@@ -457,13 +460,13 @@ class RDB
     // ("dog", "cat") - look for dogs or cats
     // (("dog", "Fido"), ("cat", "felix"), "zebra") look for text about Fido dogs or Felix cats or zebras
     // Returns array based on $mode:
-    // 0 - ($key => $value) (default)
-    // 1 - array of keys
-    // 2 - array of values
-    public function select($match, $mode = 0, $case_sensitive = true)
+    // SELECT_HASH - ($key => $value) (default)
+    // SELECT_KEYS - array of keys
+    // SELECT_VALUES - array of values
+    public function select($match, $mode = self::SELECT_HASH, $case_sensitive = true)
     {
         $result = array();
-        $this->begin($match, $mode = 0, $case_sensitive = true);
+        $this->begin($match, $mode, $case_sensitive = true);
         while (($item = $this->next()) !== false)
         {
             // $key/$value
@@ -481,7 +484,7 @@ class RDB
     // while(($item = $r->next()) !== false)
     // { <do something with $item> }
     // $r->end();
-    public function begin($match, $mode = 0, $case_sensitive = true)
+    public function begin($match, $mode, $case_sensitive = true)
     {
         // Just in case
         $this->end();
@@ -584,9 +587,9 @@ class RDB
 
             switch ($this->select_mode)
             {
-                case 1:
+                case self::SELECT_KEYS:
                     return self::decode(substr($str, 0, $pos));
-                case 2:
+                case self::SELECT_VALUES:
                     return self::decode(substr($str, $data_pos));
                 default:
                     return array(self::decode(substr($str, 0, $pos)), self::decode(substr($str, $data_pos)));
